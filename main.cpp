@@ -99,7 +99,13 @@ int main(int argc, char* argv[]) {
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Ball Simulation", NULL, NULL);
 if (!window) { glfwTerminate(); return -1; }
 glfwMakeContextCurrent(window);
-glfwSwapInterval(0);
+
+    // Cap FPS to monitor refresh rate (Hz) via vsync
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    int monitorHz = mode ? mode->refreshRate : 60;
+    std::cout << "Monitor refresh rate: " << monitorHz << " Hz" << std::endl;
+    glfwSwapInterval(1); // lock swap to 1 frame per monitor refresh (vsync)
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) { std::cerr << "GLEW failed" << std::endl; return -1; }
